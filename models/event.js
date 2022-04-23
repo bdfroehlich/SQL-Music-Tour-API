@@ -3,17 +3,20 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Band extends Model {
+  class Event extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      Event.belongsTo(models.Meet_Greet, {
+        as: 'meet_greets',
+        foreignKey: 'event_id'})
     }
   }
-  Band.init({
-    band_id: {
+  Event.init({
+    event_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
@@ -22,23 +25,23 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
     },
-    genre: {
-        type: DataTypes.TEXT,
+    date: {
+        type: DataTypes.DATE,
         allowNull: false
     },
     available_start_time: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: false
     },
     end_time: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: false
     }
   }, {
     sequelize,
-    modelName: 'Band',
-    tableName: 'bands',
+    modelName: 'Event',
+    tableName: 'events',
     timestamps: false
   });
-  return Band;
+  return Event;
 };
