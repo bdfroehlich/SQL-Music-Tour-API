@@ -11,10 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Meet_Greet.hasMany(models.Event, {
-        as: 'events',
-        foreignKey: 'event_id'
-      })
     }
   }
   Meet_Greet.init({
