@@ -2,7 +2,7 @@
 const { Op } = require('sequelize');
 const events = require('express').Router();
 const db = require('../models');
-const { Event } = db;
+const { Event, Meet_Greet, Band, Set_Time, Stage } = db;
 
 //FIND ALL EVENTS
 events.get('/', async (req, res) => {
@@ -16,6 +16,43 @@ events.get('/', async (req, res) => {
         res.status(200).json(foundEvents)
     } catch (err) {
         res.status(500).json(err)
+    }
+})
+
+// FIND A SPECIFIC EVENT
+events.get('/:name', async (req, res) => {
+    try {
+        const foundEvent = await Event.findOne({
+            where: { name: req.params.name },
+            include: [
+                { 
+                    model: Meet_Greet, 
+                    as: "meet_greets", 
+                    include: {
+                         model: Band, 
+                         as: "band", 
+                    } 
+                },
+                { 
+                    model: Set_Time, 
+                    as: "set_times",
+                    include: [
+                        { model: Band, 
+                            as: "band" },
+                        { model: Stage, 
+                            as: "stage" }
+                    ]
+                },
+                { 
+                    model: Stage, 
+                    as: "stages",
+                    through: { attributes: [] }
+                }
+            ]
+        })
+        res.status(200).json(foundEvent)
+    } catch (error) {
+        res.status(500).json(error)
     }
 })
 
@@ -48,7 +85,7 @@ events.post('/', async (req, res) => {
     }
 })
 
-//DELETE A BAND
+//DELETE AN EVENT
 events.delete('/:id', async (req, res) => {
     try {
         const deleteEvents = await Event.destroy({
